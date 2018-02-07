@@ -17,8 +17,9 @@ parser.add_argument('path_to_datafile',
 args = parser.parse_args()
 
 test_csv = open(args.path_to_CSV, 'r')
-header_line = test_csv.readline().strip()
-assert(header_line == 'visitorId,variationId')
+header_line_split= test_csv.readline().strip().split(',')
+assert(header_line_split[0] == 'visitorId')
+assert(header_line_split[1] == 'variationId')
 
 with open(args.path_to_datafile, 'r') as local_datafile:
     datafile = local_datafile.read()
