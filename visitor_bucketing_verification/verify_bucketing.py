@@ -27,9 +27,11 @@ optimizely_client = optimizely.Optimizely(datafile)
 experiment = optimizely_client.config.get_experiment_from_key(args.experiment_key)
 variation_key_to_id_map = dict()
 variation_id_to_key_map = dict()
+variation_counter_map = dict()
 for variation in experiment.variations:
     variation_key_to_id_map[variation['key']] = variation['id']
     variation_id_to_key_map[variation['id']] = variation['key']
+    variation_counter_map[variation['key']] = 0
 
 test_line = test_csv.readline().strip()
 line_count = 0
@@ -50,9 +52,14 @@ while test_line:
         bucket_value = optimizely_client.decision_service.bucketer._generate_bucket_value(bucketing_key)
         print('Visitor "' + visitor_id + '" should have been bucketed into bucket ' + str(int(bucket_value)) + '.')
 
+    variation_counter_map[bucketed_variation_key] += 1
+
     test_line = test_csv.readline()
 
 if bucketing_errors:
     print('Visitors FAILED to be successfully bucketed!')
 else:
     print('Visitors successfully bucketed!')
+
+for key in variation_counter_map:
+    print(str(variation_counter_map[key]) + ' visitors should have been in variation "' + key + '".')
